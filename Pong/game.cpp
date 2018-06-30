@@ -87,13 +87,9 @@ void Game::restart()
 	}
 	angle += 3*pi/4;
 	
-	
 	rectangle.setPosition(tailleX/16, tailleY/2);
 	rectangle2.setPosition(tailleX-tailleX/16, tailleY/2);
 	cercle.setPosition(tailleX/2, tailleY/2);
-	
-	
-	
 }
 
 bool Game::update(float deltaTime)
@@ -175,48 +171,66 @@ void Game::run()
 	sf::View vue = window.getDefaultView();
 	vue.setCenter(400, 300);
 	window.setView(vue);
-	sf::Clock clock;
 	
+	sf::Clock clock;
 	float deltaTime = clock.restart().asSeconds();
 	bool enJeu = false;
-	 ParticleSystem particles(1000);
+	ParticleSystem particles(1000);
 	particles.resize(window.getSize().x * 10);
 	
 	while (window.isOpen())
 	{
 		sf::Event event;
-		
-		if (enJeu)
+		while (window.pollEvent(event))
 		{
-			sf::Time partiChron = clock.restart();
-			deltaTime = partiChron.asSeconds();
 			
-			
-			while (window.pollEvent(event))
+			if ( (event.type == sf::Event::Closed) || ( (event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape) ) )
 			{
-				if ( (event.type == sf::Event::Closed) || ( (event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape) ) )
-				{
+				if (enJeu) {
 					enJeu = false;
 					std::cout << "Escape !!!" << std::endl;
+					messageBienvenue.setCharacterSize(40);
+					messageBienvenue.setString("Bienvenue sur le Pong de Samuel !!!");
 				}
-				if (event.type == sf::Event::Resized)
-				{
-					float zoom = 1.f;
-					if(static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y) > static_cast<float>(tailleX) / static_cast<float>(tailleY)) // x trop grands
-					{
-						zoom = static_cast<float>(window.getSize().y) / static_cast<float>(tailleY);
-					}
-					else // y trop grands
-					{
-						zoom = static_cast<float>(window.getSize().x) / static_cast<float>(tailleX);
-					}
-					vue.setViewport(sf::FloatRect((1-zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x))/2, (1-zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y))/2, zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x), zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y)));
+				else
+					window.close();
 					
-					window.setView(vue);
-					
-					particles.resize(window.getSize().x * 10);
+			}
+			if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+			{
+				if(!enJeu){
+					restart();
+					particles.reset();
+					enJeu = true;
+					clock.restart();
+				}
+				else{
+					enJeu = false;
+					messageBienvenue.setString("Pause");
+					messageBienvenue.setCharacterSize(60);
 				}
 			}
+			
+			if (event.type == sf::Event::Resized)
+			{
+				float zoom = 1.f;
+				if(static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y) > static_cast<float>(tailleX) / static_cast<float>(tailleY)){
+					zoom = static_cast<float>(window.getSize().y) / static_cast<float>(tailleY);
+				}
+				else{
+					zoom = static_cast<float>(window.getSize().x) / static_cast<float>(tailleX);
+				}
+				
+				vue.setViewport(sf::FloatRect((1-zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x))/2, (1-zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y))/2, zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x), zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y)));
+				window.setView(vue);
+				particles.resize(window.getSize().x * 10);
+			}
+		}
+		
+		
+		if (enJeu) {
+			sf::Time partiChron = clock.restart();
+			deltaTime = partiChron.asSeconds();
 			
 			//Déplacements des Paddles
 			if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Z))  && rectangle.getPosition().y > tailleRect.y/2.f)
@@ -230,8 +244,6 @@ void Game::run()
 			
 			if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) && rectangle2.getPosition().y < tailleY - tailleRect.y/2.f)
 			{rectangle2.move(0.f, paddleSpeed * deltaTime);}
-			
-			
 			if(!update(deltaTime))
 				enJeu = false;
 			
@@ -239,54 +251,13 @@ void Game::run()
 			particles.update(partiChron);
 			
 			window.clear(sf::Color::Black);
-			
 			window.draw(fond);
 			window.draw(rectangle);
 			window.draw(rectangle2);
 			window.draw(particles);
 			window.draw(cercle);
-			
-			
-			window.display();
 		}
-		
-		
-		else //enJeu == false
-		{
-			while (window.pollEvent(event))
-			{
-				if ((event.type == sf::Event::Closed) || ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
-				{window.close();}
-				
-				if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
-				{
-					restart();
-					particles.reset();
-					enJeu = true;
-					clock.restart();
-				}
-				if (event.type == sf::Event::Resized)
-				{
-					// on met à jour la vue, avec la nouvelle taille de la fenêtre
-					float zoom = 1.f;
-					if(static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y) > static_cast<float>(tailleX) / static_cast<float>(tailleY)) // x trop grands
-					{
-						zoom = static_cast<float>(window.getSize().y) / static_cast<float>(tailleY);
-					}
-					else // y trop grands
-					{
-						zoom = static_cast<float>(window.getSize().x) / static_cast<float>(tailleX);
-					}
-					vue.setViewport(sf::FloatRect((1-zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x))/2, (1-zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y))/2, zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x), zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y)));
-					
-					window.setView(vue);
-					
-					particles.resize(window.getSize().x * 10);
-				}
-			}
-			
-			
-			
+		else{
 			window.clear(sf::Color::Black);
 			window.draw(fond);
 			window.setView(sf::View(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y)));
@@ -295,9 +266,9 @@ void Game::run()
 			window.draw(messageBienvenue);
 			window.draw(message2);
 			window.setView(vue);
-			window.display();
+			
 		}
-		
+		window.display();
 		
 	}//window.isOpen()
 }//main()
