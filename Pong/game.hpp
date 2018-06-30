@@ -40,6 +40,7 @@ private:
     sf::CircleShape cercle;
     sf::Text messageBienvenue;
     sf::Text message2;
+    sf::Text message3;
     sf::Music music;
     sf::SoundBuffer ballSoundBuffer;
     sf::Sound ballSound;

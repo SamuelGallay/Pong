@@ -4,7 +4,7 @@ Game::Game(): tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordu
 {
 	//-- Loading --//
 	if (!font.loadFromFile(resourcePath() + "FiraSans-Light.otf")){
-		std::cout << "Error loading font !" << std::endl;
+		return EXIT_FAILURE;
 	}
 	if (!icon.loadFromFile(resourcePath() + "icon.jpeg")) {
 		return EXIT_FAILURE;
@@ -50,7 +50,7 @@ Game::Game(): tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordu
 	cercle.setOutlineColor(sf::Color::White);
 	cercle.setPosition(tailleX/2, tailleY/2);
 	cercle.setFillColor(sf::Color(170, 0, 170));
-	std::cout << cercle.getPointCount() << std::endl;
+	
 	
 	
 	//Message Pause
@@ -63,6 +63,11 @@ Game::Game(): tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordu
 	message2.setCharacterSize(30);
 	message2.setFillColor(sf::Color::White);
 	message2.setString("Espace pour commencer");
+	
+	message3.setFont(font);
+	message3.setCharacterSize(30);
+	message3.setFillColor(sf::Color::White);
+	message3.setString("Vitesse");
 	
 	
 	//Dégradé de fond
@@ -98,7 +103,6 @@ bool Game::update(float deltaTime)
 	cercle.move(std::cos(angle) * vitesseBille * deltaTime, std::sin(angle) * vitesseBille * deltaTime);
 	
 	if(cercle.getPosition().x - rayon < 0.f){
-		std::cout << "Red won !" << std::endl;
 		messageBienvenue.setString("Rouge Gagne !!!");
 		messageBienvenue.setCharacterSize(60);
 		message2.setString("Echap pour quitter...");
@@ -106,7 +110,6 @@ bool Game::update(float deltaTime)
 	}
 	
 	if(cercle.getPosition().x + rayon > tailleX){
-		std::cout << "Blue won !" << std::endl;
 		messageBienvenue.setString("Bleu Gagne !!!");
 		messageBienvenue.setCharacterSize(60);
 		message2.setString("Echap pour quitter...");
@@ -255,8 +258,14 @@ void Game::run()
 			particles.setEmitter(cercle.getPosition());
 			particles.update(partiChron);
 			
+			message3.setString(std::to_string(static_cast<int>(vitesseBille)));
+			
 			window.clear(sf::Color::Black);
 			window.draw(fond);
+			window.setView(sf::View(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y)));
+			message3.setPosition((window.getSize().x-message3.getGlobalBounds().width)/2, window.getSize().y*0/8);
+			window.draw(message3);
+			window.setView(vue);
 			window.draw(rectangle);
 			window.draw(rectangle2);
 			window.draw(particles);
@@ -268,6 +277,8 @@ void Game::run()
 			window.setView(sf::View(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y)));
 			messageBienvenue.setPosition((window.getSize().x-messageBienvenue.getGlobalBounds().width)/2, window.getSize().y/3);
 			message2.setPosition((window.getSize().x-message2.getGlobalBounds().width)/2, window.getSize().y*3/4);
+			message3.setPosition((window.getSize().x-message3.getGlobalBounds().width)/2, window.getSize().y*0/8);
+			window.draw(message3);
 			window.draw(messageBienvenue);
 			window.draw(message2);
 			window.setView(vue);
