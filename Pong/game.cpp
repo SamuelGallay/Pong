@@ -50,6 +50,7 @@ Game::Game(): tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordu
 	cercle.setOutlineColor(sf::Color::White);
 	cercle.setPosition(tailleX/2, tailleY/2);
 	cercle.setFillColor(sf::Color(170, 0, 170));
+	std::cout << cercle.getPointCount() << std::endl;
 	
 	
 	//Message Pause
@@ -176,7 +177,7 @@ void Game::run()
 	float deltaTime = clock.restart().asSeconds();
 	bool enJeu = false;
 	ParticleSystem particles(1000);
-	particles.resize(window.getSize().x * 10);
+	particles.resize(window.getSize().x * 5);
 	
 	while (window.isOpen())
 	{
@@ -188,9 +189,9 @@ void Game::run()
 			{
 				if (enJeu) {
 					enJeu = false;
-					std::cout << "Escape !!!" << std::endl;
 					messageBienvenue.setCharacterSize(40);
 					messageBienvenue.setString("Bienvenue sur le Pong de Samuel !!!");
+					message2.setString("Echap pour quitter...");
 				}
 				else
 					window.close();
@@ -200,14 +201,17 @@ void Game::run()
 			{
 				if(!enJeu){
 					restart();
+					clock.restart();
+					particles.setEmitter(cercle.getPosition());
 					particles.reset();
 					enJeu = true;
-					clock.restart();
+					
 				}
 				else{
 					enJeu = false;
 					messageBienvenue.setString("Pause");
 					messageBienvenue.setCharacterSize(60);
+					message2.setString("Espace pour (re)commencer");
 				}
 			}
 			
@@ -223,7 +227,7 @@ void Game::run()
 				
 				vue.setViewport(sf::FloatRect((1-zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x))/2, (1-zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y))/2, zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x), zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y)));
 				window.setView(vue);
-				particles.resize(window.getSize().x * 10);
+				particles.resize(window.getSize().x * 5);
 			}
 		}
 		
@@ -244,6 +248,7 @@ void Game::run()
 			
 			if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) && rectangle2.getPosition().y < tailleY - tailleRect.y/2.f)
 			{rectangle2.move(0.f, paddleSpeed * deltaTime);}
+			
 			if(!update(deltaTime))
 				enJeu = false;
 			

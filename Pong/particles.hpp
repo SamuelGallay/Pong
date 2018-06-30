@@ -24,6 +24,8 @@ private:
     sf::VertexArray m_vertices;
     sf::Time m_lifetime;
     sf::Vector2f m_emitter;
+    
+    sf::Color couleur;
 };
 
 #endif /* particles_hpp */

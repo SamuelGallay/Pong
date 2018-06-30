@@ -7,6 +7,7 @@ m_vertices(sf::Points, count),
 m_lifetime(sf::seconds(3)),
 m_emitter(0, 0)
 {
+    couleur = sf::Color::White;
 }
 
 void ParticleSystem::resize(unsigned int count){
@@ -32,11 +33,12 @@ void ParticleSystem::update(sf::Time elapsed){
         // on met à jour la position du vertex correspondant
         m_vertices[i].position += p.velocity * elapsed.asSeconds();
         
+        m_vertices[i].color = couleur;
         // on met à jour l'alpha (transparence) de la particule en fonction de sa durée de vie
         float ratio = p.lifetime.asSeconds() / m_lifetime.asSeconds();
         m_vertices[i].color.a = static_cast<sf::Uint8>(ratio * 255);
         
-        //m_vertices[i].color = sf::Color::Green;
+        
     }
 }
 
@@ -62,6 +64,7 @@ void ParticleSystem::resetParticle(std::size_t index){
     
     // on remet à zéro la position du vertex correspondant à la particule
     m_vertices[index].position = m_emitter;
+    m_vertices[index].position += m_particles[index].velocity * 0.1f;
 }
 
 void ParticleSystem::reset()
