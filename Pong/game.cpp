@@ -1,5 +1,13 @@
 #include "game.hpp"
 
+#if SAM_XCODE
+#else
+std::string resourcePath()
+{
+	return "";
+}
+#endif
+
 Game::Game(): tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordureBille(3), pi(3.141593)
 {
 	//-- Loading --//

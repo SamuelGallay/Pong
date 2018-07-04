@@ -10,7 +10,10 @@
 #include <cstdlib>
 #include <iostream>
 
+#if SAM_XCODE
 #include "ResourcePath.hpp"
+#endif
+
 #include "particles.hpp"
 
 class Game
