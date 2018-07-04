@@ -65,9 +65,19 @@ Game::Game(): tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordu
 	message2.setString("Espace pour commencer");
 	
 	message3.setFont(font);
-	message3.setCharacterSize(30);
+	message3.setCharacterSize(50);
 	message3.setFillColor(sf::Color::White);
 	message3.setString("Vitesse");
+	
+	blue.setFont(font);
+	blue.setCharacterSize(50);
+	blue.setFillColor(sf::Color::White);
+	blue.setString("0");
+	
+	red.setFont(font);
+	red.setCharacterSize(50);
+	red.setFillColor(sf::Color::White);
+	red.setString("0");
 	
 	
 	//Dégradé de fond
@@ -106,6 +116,8 @@ bool Game::update(float deltaTime)
 		messageBienvenue.setString("Rouge Gagne !!!");
 		messageBienvenue.setCharacterSize(60);
 		message2.setString("Echap pour quitter...");
+		score.y++;
+		red.setString(std::to_string(score.y));
 		return false;
 	}
 	
@@ -113,6 +125,8 @@ bool Game::update(float deltaTime)
 		messageBienvenue.setString("Bleu Gagne !!!");
 		messageBienvenue.setCharacterSize(60);
 		message2.setString("Echap pour quitter...");
+		score.x++;
+		blue.setString(std::to_string(score.x));
 		return false;
 	}
 	
@@ -264,6 +278,10 @@ void Game::run()
 			window.draw(fond);
 			window.setView(sf::View(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y)));
 			message3.setPosition((window.getSize().x-message3.getGlobalBounds().width)/2, window.getSize().y*0/8);
+			blue.setPosition(window.getSize().x/4 - blue.getGlobalBounds().width/2, window.getSize().y/2 - blue.getGlobalBounds().height/2);
+			red.setPosition(window.getSize().x*3/4 - red.getGlobalBounds().width/2, window.getSize().y/2 - red.getGlobalBounds().height/2);
+			window.draw(blue);
+			window.draw(red);
 			window.draw(message3);
 			window.setView(vue);
 			window.draw(rectangle);
