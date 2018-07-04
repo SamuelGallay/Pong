@@ -12,18 +12,18 @@ Game::Game(): tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordu
 {
 	//-- Loading --//
 	if (!font.loadFromFile(resourcePath() + "FiraSans-Light.otf")){
-		return EXIT_FAILURE;
+		//return EXIT_FAILURE;
 	}
 	if (!icon.loadFromFile(resourcePath() + "icon.jpeg")) {
-		return EXIT_FAILURE;
+		//return EXIT_FAILURE;
 	}
 	//Chris_Zabriskie_-_01_-_The_Temperature_of_the_Air_on_the_Bow_of_the_Kaleetan -- Open Source !
 	if (!music.openFromFile(resourcePath() + "kaleetan.ogg")) {
-		return EXIT_FAILURE;
+		//return EXIT_FAILURE;
 	}
 	music.setLoop(true);
 	if (!ballSoundBuffer.loadFromFile(resourcePath() + "ball.wav")){
-		return EXIT_FAILURE;
+		//return EXIT_FAILURE;
 	}
 	ballSound.setBuffer(ballSoundBuffer);
 	
