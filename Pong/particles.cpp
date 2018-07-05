@@ -1,6 +1,5 @@
 #include "particles.hpp"
 
-
 ParticleSystem::ParticleSystem(unsigned int count) :
 m_particles(count),
 m_vertices(sf::Points, count),
@@ -37,8 +36,6 @@ void ParticleSystem::update(sf::Time elapsed){
         // on met à jour l'alpha (transparence) de la particule en fonction de sa durée de vie
         float ratio = p.lifetime.asSeconds() / m_lifetime.asSeconds();
         m_vertices[i].color.a = static_cast<sf::Uint8>(ratio * 255);
-        
-        
     }
 }
 
@@ -51,8 +48,6 @@ void ParticleSystem::draw(sf::RenderTarget& target, sf::RenderStates states) con
     
     // on dessine enfin le vertex array
     target.draw(m_vertices, states);
-    
-    
 }
 
 void ParticleSystem::resetParticle(std::size_t index){
@@ -73,6 +68,4 @@ void ParticleSystem::reset()
     {
         resetParticle(i);
     }
-    
-
 }
