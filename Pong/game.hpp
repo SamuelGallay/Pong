@@ -13,7 +13,6 @@
 #if SAM_XCODE
 #include "ResourcePath.hpp"
 #endif
-
 #include "particles.hpp"
 
 class Game
@@ -25,6 +24,7 @@ public:
 private:
     void restart();
     bool update(float deltaTime);
+    void processEvents();
     
     const int tailleX;
     const int tailleY;
@@ -37,6 +37,12 @@ private:
     float vitesseBille;
     float angle;
     sf::Vector2f tailleRect;
+    
+    sf::View vue;
+    sf::RenderWindow window;
+    ParticleSystem particles;
+    sf::Clock clock;
+    bool enJeu;
 
     sf::RectangleShape rectangle;
     sf::RectangleShape rectangle2;
@@ -53,6 +59,7 @@ private:
     sf::Image icon;
     sf::Font font;
     sf::VertexArray fond;
+    
 };
 
 #endif

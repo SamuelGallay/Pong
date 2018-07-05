@@ -8,7 +8,7 @@ std::string resourcePath()
 }
 #endif
 
-Game::Game(): tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordureBille(3), pi(3.141593)
+Game::Game(): window(sf::VideoMode(tailleX, tailleY, 32), "Pong"), particles(1000), tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordureBille(3), pi(3.141593)
 {
 	//-- Loading --//
 	if (!font.loadFromFile(resourcePath() + "FiraSans-Light.otf")){
@@ -187,75 +187,78 @@ bool Game::update(float deltaTime)
 	return true;
 }
 
-void Game::run()
+void Game::processEvents()
 {
-	music.play();
-	sf::RenderWindow window(sf::VideoMode(tailleX, tailleY, 32), "Pong");
-	window.setVerticalSyncEnabled(true);
-	window.setKeyRepeatEnabled(false);
-	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-	sf::View vue = window.getDefaultView();
-	vue.setCenter(400, 300);
-	window.setView(vue);
-	
-	sf::Clock clock;
-	float deltaTime = clock.restart().asSeconds();
-	bool enJeu = false;
-	ParticleSystem particles(1000);
-	particles.resize(window.getSize().x * 5);
-	
-	while (window.isOpen())
+	sf::Event event;
+	while (window.pollEvent(event))
 	{
-		sf::Event event;
-		while (window.pollEvent(event))
+		
+		if ( (event.type == sf::Event::Closed) || ( (event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape) ) )
 		{
-			
-			if ( (event.type == sf::Event::Closed) || ( (event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape) ) )
-			{
-				if (enJeu) {
-					enJeu = false;
-					messageBienvenue.setCharacterSize(40);
-					messageBienvenue.setString("Bienvenue sur le Pong de Samuel !!!");
-					message2.setString("Echap pour quitter...");
-				}
-				else
-					window.close();
-					
+			if (enJeu) {
+				enJeu = false;
+				messageBienvenue.setCharacterSize(40);
+				messageBienvenue.setString("Bienvenue sur le Pong de Samuel !!!");
+				message2.setString("Echap pour quitter...");
 			}
-			if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
-			{
-				if(!enJeu){
-					restart();
-					clock.restart();
-					particles.setEmitter(cercle.getPosition());
-					particles.reset();
-					enJeu = true;
-					
-				}
-				else{
-					enJeu = false;
-					messageBienvenue.setString("Pause");
-					messageBienvenue.setCharacterSize(60);
-					message2.setString("Espace pour (re)commencer");
-				}
-			}
+			else
+				window.close();
 			
-			if (event.type == sf::Event::Resized)
-			{
-				float zoom = 1.f;
-				if(static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y) > static_cast<float>(tailleX) / static_cast<float>(tailleY)){
-					zoom = static_cast<float>(window.getSize().y) / static_cast<float>(tailleY);
-				}
-				else{
-					zoom = static_cast<float>(window.getSize().x) / static_cast<float>(tailleX);
-				}
+		}
+		if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+		{
+			if(!enJeu){
+				restart();
+				clock.restart();
+				particles.setEmitter(cercle.getPosition());
+				particles.reset();
+				enJeu = true;
 				
-				vue.setViewport(sf::FloatRect((1-zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x))/2, (1-zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y))/2, zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x), zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y)));
-				window.setView(vue);
-				particles.resize(window.getSize().x * 5);
+			}
+			else{
+				enJeu = false;
+				messageBienvenue.setString("Pause");
+				messageBienvenue.setCharacterSize(60);
+				message2.setString("Espace pour (re)commencer");
 			}
 		}
 		
+		if (event.type == sf::Event::Resized)
+		{
+			float zoom = 1.f;
+			if(static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y) > static_cast<float>(tailleX) / static_cast<float>(tailleY)){
+				zoom = static_cast<float>(window.getSize().y) / static_cast<float>(tailleY);
+			}
+			else{
+				zoom = static_cast<float>(window.getSize().x) / static_cast<float>(tailleX);
+			}
+			
+			vue.setViewport(sf::FloatRect((1-zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x))/2, (1-zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y))/2, zoom*static_cast<float>(tailleX)/static_cast<float>(window.getSize().x), zoom*static_cast<float>(tailleY)/static_cast<float>(window.getSize().y)));
+			window.setView(vue);
+			particles.resize(window.getSize().x * 5);
+		}
+	}
+}
+
+void Game::run()
+{
+	window.setVerticalSyncEnabled(true);
+	window.setKeyRepeatEnabled(false);
+	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+	
+	vue = window.getDefaultView();
+	vue.setCenter(400, 300);
+	window.setView(vue);
+	
+	particles.resize(window.getSize().x * 5);
+	
+	music.play();
+	float deltaTime = clock.restart().asSeconds();
+	enJeu = false;
+	
+	while (window.isOpen())
+	{
+		processEvents();
 		
 		if (enJeu) {
 			sf::Time partiChron = clock.restart();
