@@ -8,15 +8,15 @@ std::string resourcePath()
 }
 #endif
 
-Game::Game(): window(sf::VideoMode(tailleX, tailleY, 32), "Pong"), particles(1000), tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordureBille(3), pi(3.141593)
+Game::Game(): window(sf::VideoMode(800, 600, 32), "Pong"), particles(1000), tailleX(800), tailleY(600), tailleBordureRect(4), rayon(15), bordureBille(3), pi(3.141593)
 {
 	//-- Loading --//
 	font.loadFromFile(resourcePath() + "FiraSans-Light.otf");
 	icon.loadFromFile(resourcePath() + "icon.jpeg");
-	music.openFromFile(resourcePath() + "kaleetan.ogg");
+	music.openFromFile(resourcePath() + "fantasy.ogg");
+    music.setVolume(50);
 	ballSoundBuffer.loadFromFile(resourcePath() + "ball.wav");
 	
-	//Chris_Zabriskie_-_01_-_The_Temperature_of_the_Air_on_the_Bow_of_the_Kaleetan -- Open Source !
 	music.setLoop(true);
 	ballSound.setBuffer(ballSoundBuffer);
 	
@@ -82,7 +82,7 @@ Game::Game(): window(sf::VideoMode(tailleX, tailleY, 32), "Pong"), particles(100
 	message3.setFont(font);
 	message3.setCharacterSize(50);
 	message3.setFillColor(sf::Color::White);
-	message3.setString("Vitesse");
+	message3.setString("");
 	
 	//Message Bleu
 	blue.setFont(font);
@@ -179,7 +179,7 @@ void Game::update(sf::Time deltaTime)
 	cercle.move(std::cos(angle) * vitesseBille * deltaTime.asSeconds(), std::sin(angle) * vitesseBille * deltaTime.asSeconds());
 	
 	if (cercle.getPosition().x - rayon < rectangle.getPosition().x + tailleRect.x / 2 &&
-		cercle.getPosition().x - rayon > rectangle.getPosition().x &&
+		cercle.getPosition().x - rayon > rectangle.getPosition().x - tailleRect.x / 2 &&
 		cercle.getPosition().y + rayon >= rectangle.getPosition().y - tailleRect.y / 2 &&
 		cercle.getPosition().y - rayon <= rectangle.getPosition().y + tailleRect.y / 2)
 	{
@@ -195,7 +195,7 @@ void Game::update(sf::Time deltaTime)
 	}
 	
 	if (cercle.getPosition().x + rayon > rectangle2.getPosition().x - tailleRect.x / 2 &&
-		cercle.getPosition().x + rayon < rectangle2.getPosition().x &&
+		cercle.getPosition().x + rayon < rectangle2.getPosition().x + tailleRect.x / 2 &&
 		cercle.getPosition().y + rayon >= rectangle2.getPosition().y - tailleRect.y / 2 &&
 		cercle.getPosition().y - rayon <= rectangle2.getPosition().y + tailleRect.y / 2)
 	{
@@ -281,6 +281,12 @@ void Game::processEvents()
 				message2.setString("Espace pour (re)commencer");
 			}
 		}
+        
+        if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::F))
+        {
+            
+            event.type = sf::Event::Resized;
+        }
 		
 		if (event.type == sf::Event::Resized)
 		{
@@ -302,18 +308,25 @@ void Game::processEvents()
 //-- Déplacement des Paddles --//
 void Game::paddlesInput(sf::Time deltaTime)
 {
-	//Déplacements des Paddles
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Z))  && rectangle.getPosition().y > tailleRect.y/2.f)
-	{rectangle.move(0.f, -paddleSpeed * deltaTime.asSeconds());}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+        rectangle.move(0.f, -paddleSpeed * deltaTime.asSeconds());
+	if (rectangle.getPosition().y < tailleRect.y/2.f)
+        rectangle.setPosition(rectangle.getPosition().x, tailleRect.y/2.f);
+    
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        rectangle.move(0.f, paddleSpeed * deltaTime.asSeconds());
+    if (rectangle.getPosition().y > tailleY - tailleRect.y/2.f)
+        rectangle.setPosition(rectangle.getPosition().x, tailleY - tailleRect.y/2.f);
 	
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S)) && rectangle.getPosition().y < tailleY - tailleRect.y/2.f)
-	{rectangle.move(0.f, paddleSpeed * deltaTime.asSeconds());}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        rectangle2.move(0.f, -paddleSpeed * deltaTime.asSeconds());
+    if (rectangle2.getPosition().y < tailleRect.y/2.f)
+        rectangle2.setPosition(rectangle2.getPosition().x, tailleRect.y/2.f);
 	
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) && rectangle2.getPosition().y > tailleRect.y/2.f)
-	{rectangle2.move(0.f, -paddleSpeed * deltaTime.asSeconds());}
-	
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) && rectangle2.getPosition().y < tailleY - tailleRect.y/2.f)
-	{rectangle2.move(0.f, paddleSpeed * deltaTime.asSeconds());}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        rectangle2.move(0.f, paddleSpeed * deltaTime.asSeconds());
+    if (rectangle2.getPosition().y > tailleY - tailleRect.y/2.f)
+        rectangle2.setPosition(rectangle2.getPosition().x, tailleY - tailleRect.y/2.f);
 }
 
 //-- Positionne et écrit les messages (sans les afficher) --//
@@ -331,5 +344,3 @@ void Game::updateMessages()
 		message3.setPosition((window.getSize().x-message3.getGlobalBounds().width)/2, window.getSize().y*0/8);
 	}
 }
-
-
