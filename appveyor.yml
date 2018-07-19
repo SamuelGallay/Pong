@@ -46,12 +46,12 @@ after_build:
 
 artifacts:
   - path: build/Release
-    name: samuel-windows-32bits-v$(appveyor_build_version)
+    name: samuel-windows-32bits
 
 deploy:
   provider: GitHub
   auth_token: 
     secure: huiMZBxW7TQokBS6FppoWYg5jOF/hZSeiZRp5tIU5w2Vs25Ve0dQ+VTuMoRYQhMa
-  artifact: samuel-windows-32bits-v$(appveyor_build_version)
+  artifact: samuel-windows-32bits
   on:
     appveyor_repo_tag: true
