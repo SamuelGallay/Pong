@@ -4,7 +4,7 @@
 #else
 std::string resourcePath()
 {
-	return "";
+	return "media/";
 }
 #endif
 

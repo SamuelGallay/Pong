@@ -1,0 +1,57 @@
+version: '1.1.{build}'
+
+image: Visual Studio 2017
+
+platform:
+  - Win32
+
+configuration:
+  - Release
+
+install:
+  - git submodule update --init --recursive
+
+before_build:
+- cmd: >-
+    git clone https://github.com/SFML/SFML.git
+    
+    cd SFML
+
+    mkdir install
+    
+    mkdir build
+    
+    cd build
+    
+    cmake -DCMAKE_INSTALL_PREFIX=../install -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_STATIC_STD_LIBS=TRUE ..
+
+    msbuild INSTALL.vcxproj
+
+    cd ../../
+    
+    mkdir build
+    
+    cd build
+
+    cmake -DSFML_DIR="C:\projects\pong\SFML\install\lib\cmake\SFML" -DSFML_STATIC_LIBRARIES=TRUE ..
+
+    cd ..
+
+build:
+  project: build\Pong.sln
+
+after_build:
+  - cp -R media build/Release/media
+  - cp SFML/install/bin/openal32.dll build/Release/
+
+artifacts:
+  - path: build/Release
+    name: samuel-windows-32bits-v$(appveyor_build_version)
+
+deploy:
+  provider: GitHub
+  auth_token: 
+    secure: huiMZBxW7TQokBS6FppoWYg5jOF/hZSeiZRp5tIU5w2Vs25Ve0dQ+VTuMoRYQhMa
+  artifact: samuel-windows-32bits-v$(appveyor_build_version)
+  on:
+    appveyor_repo_tag: true
