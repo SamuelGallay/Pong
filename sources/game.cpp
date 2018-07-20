@@ -333,7 +333,7 @@ void Game::paddlesInput(sf::Time deltaTime)
 void Game::updateMessages()
 {
 	if (enJeu) {
-		message3.setString(std::to_string(static_cast<int>(vitesseBille)));
+		message3.setString(std::to_string(static_cast<int>(vitesseBille/40)));
 		message3.setPosition((window.getSize().x-message3.getGlobalBounds().width)/2, window.getSize().y*0/8);
 		blue.setPosition(window.getSize().x/4 - blue.getGlobalBounds().width/2, window.getSize().y/2 - blue.getGlobalBounds().height/2);
 		red.setPosition(window.getSize().x*3/4 - red.getGlobalBounds().width/2, window.getSize().y/2 - red.getGlobalBounds().height/2);
