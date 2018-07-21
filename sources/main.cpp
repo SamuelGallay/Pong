@@ -1,8 +1,8 @@
-#include "game.hpp"
+#include "application.hpp"
 
 int main()
 {
-  Game maPartie;
-  maPartie.run();
+    Application app;
+    app.run();
 }
 

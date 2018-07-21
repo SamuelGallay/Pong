@@ -1,4 +1,4 @@
-version: '1.1.{build}'
+version: '1.2.{build}'
 
 image: Visual Studio 2017
 
@@ -21,19 +21,19 @@ before_build:
   - msbuild INSTALL.vcxproj
   - cd ../../
   - mkdir build
+  - mkdir install
   - cd build
-  - cmake -DSFML_DIR="C:\projects\pong\SFML\install\lib\cmake\SFML" -DSFML_STATIC_LIBRARIES=TRUE ..
+  - cmake -DCMAKE_INSTALL_PREFIX=../install -DSFML_DIR="C:\projects\pong\SFML\install\lib\cmake\SFML" -DSFML_STATIC_LIBRARIES=TRUE ..
   - cd ..
 
 build:
-  project: build\Pong.sln
+  project: build\INSTALL.vcxproj
 
 after_build:
-  - cp -R media build/Release/media
-  - cp SFML/install/bin/openal32.dll build/Release/
+  - cp SFML/install/bin/openal32.dll install/
 
 artifacts:
-  - path: build/Release
+  - path: install
     name: samuel-windows-32bits
 
 deploy:
